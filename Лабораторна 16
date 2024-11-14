@@ -1,0 +1,106 @@
+Завдання 1:
+import re
+    from nltk.corpus import stopwords
+    from collections import Counter
+    import matplotlib.pyplot as plt
+    import nltk
+    
+    # Завантаження необхідних ресурсів
+    nltk.download('stopwords')
+    
+    # Читання тексту з локального файлу
+    with open('text.txt', 'r', encoding='utf-8') as file:
+        text = file.read()
+    
+    # Токенізація слів за допомогою регулярних виразів
+    words = re.findall(r'\b\w+\b', text)
+    
+    # Підрахунок загальної кількості слів у тексті
+    word_count = len(words)
+    print(f"Загальна кількість слів у тексті: {word_count}")
+    
+    # Підрахунок частоти слів
+    word_freq = Counter(words)
+    
+    # Визначення 10 найбільш вживаних слів
+    most_common_words = word_freq.most_common(10)
+    print("10 найбільш вживаних слів:")
+    for word, freq in most_common_words:
+        print(f"{word}: {freq}")
+    
+    # Побудова стовпчастої діаграми для 10 найбільш вживаних слів
+    words, counts = zip(*most_common_words)
+    plt.figure(figsize=(10, 5))
+    plt.bar(words, counts)
+    plt.title('10 найбільш вживаних слів у тексті')
+    plt.xlabel('Слова')
+    plt.ylabel('Частота')
+    plt.show()
+    
+    # Видалення стоп-слів
+    stop_words = set(stopwords.words('english'))
+    filtered_words = [word.lower() for word in words if word.lower() not in stop_words]
+    
+    # Підрахунок частоти слів після фільтрації
+    filtered_word_freq = Counter(filtered_words)
+    
+    # Визначення 10 найбільш вживаних слів після видалення стоп-слів
+    most_common_filtered_words = filtered_word_freq.most_common(10)
+    print("10 найбільш вживаних слів після видалення стоп-слів:")
+    for word, freq in most_common_filtered_words:
+        print(f"{word}: {freq}")
+    
+    # Побудова стовпчастої діаграми для 10 найбільш вживаних слів після фільтрації
+    words, counts = zip(*most_common_filtered_words)
+    plt.figure(figsize=(10, 5))
+    plt.bar(words, counts)
+    plt.title('10 найбільш вживаних слів після видалення стоп-слів')
+    plt.xlabel('Слова')
+    plt.ylabel('Частота')
+    plt.show()
+
+
+
+Завдання 2:
+import nltk
+import re
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer, PorterStemmer
+import string
+
+# Завантаження необхідних ресурсів NLTK
+nltk.download('stopwords', quiet=True)
+nltk.download('wordnet', quiet=True)
+
+# Текст для обробки
+input_text = """In the beginning God created the heaven and the earth. And the earth was without form, and void; 
+and darkness was upon the face of the deep. And the Spirit of God moved upon the face of the waters. 
+And God said, Let there be light: and there was light."""
+
+# Збереження тексту в файл
+with open('input_text.txt', 'w') as file:
+    file.write(input_text)
+
+# Зчитування тексту з файлу
+with open('input_text.txt', 'r') as file:
+    text = file.read()
+
+# Простий метод токенізації
+tokens = re.findall(r'\b\w+\b', text)
+
+# Лемматизація та стеммінг
+lemmatizer = WordNetLemmatizer()
+stemmer = PorterStemmer()
+
+lemmatized_words = [lemmatizer.lemmatize(word) for word in tokens]
+stemmed_words = [stemmer.stem(word) for word in lemmatized_words]
+
+# Видалення стоп-слів та пунктуації
+stop_words = set(stopwords.words('english'))
+filtered_words = [word for word in stemmed_words if word.lower() not in stop_words and word not in string.punctuation]
+
+# Запис обробленого тексту в новий файл
+with open('processed_text.txt', 'w') as file:
+    file.write(' '.join(filtered_words))
+
+print("Оброблений текст успішно записано у файл 'processed_text.txt'.")
